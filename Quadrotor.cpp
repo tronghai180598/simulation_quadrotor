@@ -1,4 +1,4 @@
-#include "chiakhoa.h"
+#include "Quadrotor.h"
 #include <string>
 #include <vector>
 #include <math.h>
@@ -16,17 +16,17 @@ void Quadrotor::_calculate_translational_dynamics(float phi, float theta, float 
         float R_y = (cos(phi)*sin(psi)*sin(theta) - cos(psi)*sin(phi));
         float R_z = cos(phi)*cos(theta);
         
-        state[6] += (-R_x * Forces[0]/m - kdx*x_dot/m)* dt;
-        state[7] += (-R_y * Forces[0]/m - kdy*y_dot/m) * dt;
-        state[8] += ((R_z * Forces[0]/m) - g - (kdz*z_dot/m)) * dt;
+        state[6] += (-R_x * Forces[0]/m - kdx*x_dot/m)* dt;  //ddot x
+        state[7] += (-R_y * Forces[0]/m - kdy*y_dot/m) * dt; //ddot y
+        state[8] += ((R_z * Forces[0]/m) - g - (kdz*z_dot/m)) * dt; //ddot z
 }
 void Quadrotor::_calculate_rotational_dynamics(float p, float q, float r){
-        float p_dot = (q*r*(jy - jz) + Forces[1]) / jx; //+ gyro_p 
-        float q_dot = (p*r*(jz - jx) + Forces[2]) / jy;  //+ gyro_q
-        float r_dot = (p*q*(jx - jy) + Forces[3]) / jz;
-        state[3] += p_dot * dt;
-        state[4] += q_dot * dt;
-        state[5] += r_dot * dt;
+        float p_dot = (q*r*(jy - jz) + Forces[1]) / jx; // ddot p
+        float q_dot = (p*r*(jz - jx) + Forces[2]) / jy;  // ddot q
+        float r_dot = (p*q*(jx - jy) + Forces[3]) / jz;  // ddot r
+        state[3] += p_dot * dt;   // p
+        state[4] += q_dot * dt;   // q
+        state[5] += r_dot * dt;   // r
         satura(state[3], -p_max, p_max);
         satura(state[4], -p_max, p_max);
         satura(state[5], -p_max, p_max);
@@ -39,19 +39,19 @@ void Quadrotor::_integrate_states(){
         float q = state[4];
         float r = state[5];
 
-        float phi_dot = p + sin(phi)*tan(theta)*q + cos(phi)*tan(theta)*r;
-        float theta_dot = cos(phi)*q - sin(phi)*r;
-        float psi_dot = (sin(phi)/cos(theta))*q + (cos(phi)/cos(theta))*r;
-        state[0] += phi_dot * dt;
-        state[1] += theta_dot * dt;
-        state[2] += psi_dot * dt;
+        phi_dot = p + sin(phi)*tan(theta)*q + cos(phi)*tan(theta)*r;  // dot phi
+        theta_dot = cos(phi)*q - sin(phi)*r;  // dot theta
+        psi_dot = (sin(phi)/cos(theta))*q + (cos(phi)/cos(theta))*r;  // dot psi
+        state[0] += phi_dot * dt;  // phi
+        state[1] += theta_dot * dt;  // theta
+        state[2] += psi_dot * dt;  // psi
         satura(state[0], -phi_max, phi_max);
         satura(state[1], -phi_max, phi_max);
         satura(state[2], -psi_max, psi_max);
 
-        state[9] += state[6] * dt;
-        state[10] += state[7] * dt;
-        state[11] = std::max(0.0f, state[11] + state[8] * dt);
+        state[9] += state[6] * dt; // x position
+        state[10] += state[7] * dt; // y position
+        state[11] = std::max(0.0f, state[11] + state[8] * dt); // z position
 }
 void Quadrotor::_calculate_motor_speeds(std::vector<float> control_inputs){
         float F_total = control_inputs[0];

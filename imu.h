@@ -1,5 +1,5 @@
 #pragma once 
-#include "chiakhoa.h"
+#include "Quadrotor.h"
 #include <string>
 #include <math.h>
 // float F;

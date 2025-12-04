@@ -22,6 +22,9 @@ public:
     float p_max = 100.0;
     float phi_max= 90.0;
     float psi_max= 180.0;
+    float phi_dot = 0.0;
+    float theta_dot = 0.0;
+    float psi_dot = 0.0;
     std::vector<float> state;  // x, y, z, x_dot, y_dot, z_dot, phi, theta, psi, p, q, r
     std::vector<float> Forces;
     std::vector<float> motor_speeds;  // 4 motor speeds

@@ -5,8 +5,8 @@ TARGET    := app
 .PHONY: all run clean
 all: $(TARGET)
 
-$(TARGET): main.cpp chiakhoa.cpp
-	@$(CXX) $(CXXFLAGS) main.cpp chiakhoa.cpp -o $@
+$(TARGET): main.cpp Quadrotor.cpp controller.cpp
+	@$(CXX) $(CXXFLAGS) main.cpp Quadrotor.cpp controller.cpp -o $@
 
 run: all
 	@./$(TARGET)
